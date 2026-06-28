@@ -4,6 +4,7 @@
   var birthdayBanner = document.getElementById('birthday-banner');
   var birthdayBannerTrack = document.getElementById('birthday-banner-track');
   var birthdayAudio = null;
+  var birthdayAudioUnlockBound = false;
   var celebrationUtils = window.CelebrationUtils;
 
   function setTheme(isDark) {
@@ -71,25 +72,61 @@
     return birthdayAudio;
   }
 
-  function startAudioOnInteraction() {
+  function playBirthdayAudio() {
     var audio = getBirthdayAudio();
     if (!audio) {
-      return;
+      return Promise.resolve();
     }
 
-    audio.play().catch(function () {
-      // Ignore autoplay rejections; next interaction can retry.
-    });
+    return audio.play();
   }
 
   function bindAudioUnlock() {
+    if (birthdayAudioUnlockBound) {
+      return;
+    }
+
+    birthdayAudioUnlockBound = true;
     var events = ['click', 'touchstart', 'keydown'];
     events.forEach(function (eventName) {
-      document.addEventListener(eventName, startAudioOnInteraction, { once: true });
+      document.addEventListener(eventName, playBirthdayAudio, { once: true });
     });
   }
 
+  function requestBirthdayAudioPlayback() {
+    playBirthdayAudio().catch(function () {
+      // Autoplay can be blocked; retry after first user interaction.
+      bindAudioUnlock();
+    });
+  }
+
+  function triggerBirthdayCelebration(options) {
+    var celebrationOptions = options || {};
+    var now = new Date();
+    var defaultMessage = celebrationUtils ? celebrationUtils.getBannerMessage(now) : '';
+    var message = celebrationOptions.message || defaultMessage || 'Happy Birthday';
+
+    if (birthdayBanner && birthdayBannerTrack) {
+      birthdayBanner.hidden = false;
+      birthdayBannerTrack.textContent = (message + '  •  ').repeat(12);
+    }
+
+    setTheme(true);
+    requestBirthdayAudioPlayback();
+  }
+
+  window.birthday = function (options) {
+    triggerBirthdayCelebration(options);
+
+    if (typeof window.startBirthdayConfetti === 'function') {
+      window.startBirthdayConfetti();
+    }
+  };
+
   initTheme();
   setBirthdayBanner();
-  bindAudioUnlock();
+
+  if (celebrationUtils && celebrationUtils.isCelebrationDate(new Date())) {
+    requestBirthdayAudioPlayback();
+  }
 })();

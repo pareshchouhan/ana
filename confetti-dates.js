@@ -1,10 +1,17 @@
 (function () {
   const celebrationUtils = window.CelebrationUtils;
+  let confettiLoopStarted = false;
 
   function runConfetti() {
+    if (confettiLoopStarted) {
+      return;
+    }
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
+
+    confettiLoopStarted = true;
 
     const defaults = {
       zIndex: 9999
@@ -87,6 +94,8 @@
 
     scheduleExplosionLoop();
   }
+
+  window.startBirthdayConfetti = runConfetti;
 
   if (celebrationUtils && celebrationUtils.isCelebrationDate(new Date())) {
     runConfetti();
