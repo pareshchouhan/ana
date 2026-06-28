@@ -7,12 +7,82 @@
   <title>Thank you ana</title>
 </head>
 <style>
+  :root {
+    --bg-color: #fdfbf8;
+    --text-color: #1e1b18;
+    --surface-color: #ffffff;
+    --border-color: #d7d0c6;
+  }
+
+  body {
+    background: radial-gradient(circle at top, #fff7eb 0%, var(--bg-color) 45%);
+    color: var(--text-color);
+    transition: background 0.4s ease, color 0.3s ease;
+  }
+
+  body.dark-mode {
+    --bg-color: #11151b;
+    --text-color: #edf2f7;
+    --surface-color: #1a222d;
+    --border-color: #334155;
+    background: radial-gradient(circle at top, #1f2937 0%, var(--bg-color) 55%);
+  }
+
+  .theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    border: 1px solid var(--border-color);
+    background: var(--surface-color);
+    color: var(--text-color);
+    border-radius: 999px;
+    padding: 0.55rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  .birthday-banner {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    overflow: hidden;
+    padding: 0.9rem 0;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    background: linear-gradient(90deg, #ffd8a8 0%, #ffe8cc 50%, #ffd8a8 100%);
+    color: #6b2500;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .birthday-banner-track {
+    display: inline-block;
+    padding-left: 100%;
+    animation: birthday-marquee 28s linear infinite;
+  }
+
+  @keyframes birthday-marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  body.dark-mode .birthday-banner {
+    background: linear-gradient(90deg, #2b3443 0%, #334155 50%, #2b3443 100%);
+    color: #f8fafc;
+  }
+
   .main-section {
     width: 80vw;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
-    margin-top: 10rem;
+    margin-top: 2rem;
     font-family: sans-serif;
   }
   .main-section h1 {
@@ -23,7 +93,7 @@
   }
   .cube-small {
     width: auto;
-    height: 250px;
+    max-height: 100px;
   }
   .logos {
     display: flex;
@@ -31,9 +101,15 @@
     margin-right: auto;
     width: 80vw;
     justify-content: center;
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 </style>
 <body>
+  <div id="birthday-banner" class="birthday-banner" hidden>
+    <div id="birthday-banner-track" class="birthday-banner-track"></div>
+  </div>
+  <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">Dark Mode</button>
   <section class="main-section">
     <h1>Thank you <i>Anastasia Tyurina</i>, Thank you for being you.</h1>
     <h2>Thankful and grateful that my life got touched by your presence. A pleasure to witness ana be ana, thank you.</h2>
@@ -47,5 +123,9 @@
     <img class="cube-small" src="ffix.jpg"/>
     <img class="cube-small" src="ittakestwo.jpeg"/>
   </div>
+  <script src="confetti.browser.min.js"></script>
+  <script src="celebration-utils.js"></script>
+  <script src="page-effects.js"></script>
+  <script src="confetti-dates.js"></script>
 </body>
 </html>
